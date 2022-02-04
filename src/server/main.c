@@ -7,36 +7,45 @@
 #include <time.h>
 
 int set_signal_handler(int signal_no, void (*handler_function)(int, siginfo_t *, void *));
-void print_signal_message(int signal_no, const siginfo_t *info);
+int	g_message = 1;
 
-int g_counter_sent = 0;
-char	g_message = 0;
-
-void	signal_catcher(int signal_no, siginfo_t *info, void *hmm)
+int	is_byte_finished()
 {
-	//print_signal_message(signal_no, info);
-	(void) signal_no;
-	(void) info;
-	(void) hmm;
-	if (g_counter_sent < 1000)
+	if (g_message & 0b10000000)
 	{
-		kill(info->si_pid, SIGUSR2);
-		g_counter_sent++;
+		fprintf(stderr, "received char %c, ascii value %d\n", g_message & 0b01111111, g_message & 0b01111111);
+		return (1);
 	}
+	return (0);
+}
+
+void	handle_incomming_bit(int signal_no, int caller_pid)
+{
+	g_message = g_message << 1;
+	if (signal_no == SIGUSR2)
+		g_message = g_message | 1;
+	if (! is_byte_finished())
+		kill(caller_pid, SIGUSR2);
 	else
 	{
-		fprintf(stderr, "the server received %d signals\n", g_counter_sent);
-		kill(info->si_pid, SIGUSR1);
-		kill(getpid(), SIGTERM);
+		g_message = 1;
+		//kill(caller_pid, SIGUSR1);
+		//kill(getpid(), SIGTERM);
 	}
 }
 
-void print_signal_message(int signal_no, const siginfo_t *info) {
-	ft_putstr_fd("signal_no caught with no: ", 2);
-	ft_putnbr_fd(signal_no, 2);
-	ft_putstr_fd(", caller pid : ", 2);
-	ft_putnbr_fd(info->si_pid, 2);
-	ft_putstr_fd("\n", 2);
+void	receive_zero_bit(int signal_no, siginfo_t *info, void *hmm)
+{
+	(void) signal_no;
+	(void) hmm;
+	handle_incomming_bit(SIGUSR1, info->si_pid);
+}
+
+void	receive_one_bit(int signal_no, siginfo_t *info, void *hmm)
+{
+	(void) signal_no;
+	(void) hmm;
+	handle_incomming_bit(SIGUSR2, info->si_pid);
 }
 
 int main (int argc, char** argv)
@@ -49,7 +58,8 @@ int main (int argc, char** argv)
 	ft_putnbr_fd(my_pid, 2);
 	ft_putendl_fd("", 2);
 
-	if (set_signal_handler(SIGUSR1, signal_catcher))
+	if (set_signal_handler(SIGUSR1, receive_zero_bit) \
+		|| set_signal_handler(SIGUSR2, receive_one_bit))
 		return (1);
 
 	while (1)
@@ -58,7 +68,6 @@ int main (int argc, char** argv)
 		//ft_putendl_fd("tick", 2);
     }
 	//ft_putendl_fd("the server is done and will shutdown now", 2);
-	fprintf(stderr, "the server received %d signals\n", g_counter_sent);
 
     return EXIT_SUCCESS;
 	(void) argc;
