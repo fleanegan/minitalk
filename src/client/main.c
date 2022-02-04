@@ -27,8 +27,7 @@ void	suicide(int signal_no, siginfo_t *info, void *hmm)
 	(void) signal_no;
 	(void) info;
 	(void) hmm;
-	kill(info->si_pid, SIGTERM);
-	kill(getpid(), SIGTERM);
+	//kill(getpid(), SIGTERM);
 }
 
 int main (int argc, char** argv)
@@ -40,8 +39,10 @@ int main (int argc, char** argv)
 	if (set_signal_handler(SIGUSR2, signal_catcher), \
 		set_signal_handler(SIGUSR1, suicide))
 		return (1);
-	send_one_char(server_id, 'a');
-	send_one_char(server_id, 'y');
+	send_one_char(server_id, 'B');
+	send_one_char(server_id, 'Y');
+	send_one_char(server_id, 'O');
+	send_one_char(server_id, 'B');
 	printf("the client received %d signals\n", g_counter_received);
 	kill(server_id, SIGTERM);
 	kill(getpid(), SIGTERM);
@@ -55,17 +56,18 @@ int	send_one_char(int server_pid, char data)
 {
 	unsigned char	bit_to_transfer;
 	int				counter;
-	while (data)
+	char			bit_len = 8;
+	while (bit_len--)
 	{
 		counter = g_counter_received;
-		bit_to_transfer = data & 0b01000000;
+		bit_to_transfer = data & 0b10000000;
 		data = data << 0b00000001;
-		//printf("bit: %d\n", bit_to_transfer);
+//		printf("bit: %d\n", bit_to_transfer);
 		if (bit_to_transfer)
 			kill(server_pid, SIGUSR2);
 		else
 			kill(server_pid, SIGUSR1);
-		usleep(100);
+		sleep(1);
 		if (g_counter_received == counter)
 			return (1);
 	}

@@ -11,7 +11,7 @@ int	g_message = 1;
 
 int	is_byte_finished()
 {
-	if (g_message & 0b10000000)
+	if (g_message & 256)
 	{
 		fprintf(stderr, "received char %c, ascii value %d\n", g_message & 0b01111111, g_message & 0b01111111);
 		return (1);
@@ -29,7 +29,7 @@ void	handle_incomming_bit(int signal_no, int caller_pid)
 	else
 	{
 		g_message = 1;
-		//kill(caller_pid, SIGUSR1);
+		kill(caller_pid, SIGUSR1);
 		//kill(getpid(), SIGTERM);
 	}
 }
