@@ -1,0 +1,2 @@
+- modify lstaddback so that NULL elements dont cause crash
+- do we need to modify lstclear, too?

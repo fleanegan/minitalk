@@ -7,13 +7,15 @@
 #include <time.h>
 
 int set_signal_handler(int signal_no, void (*handler_function)(int, siginfo_t *, void *));
-int	g_message = 1;
+int	g_message_legacy = 1;
 
 int	is_byte_finished()
 {
-	if (g_message & 256)
+	char	byte;
+	if (g_message_legacy & 256)
 	{
-		fprintf(stderr, "received char %c, ascii value %d\n", g_message & 0b01111111, g_message & 0b01111111);
+		byte = g_message_legacy & 0b01111111;
+		ft_putchar_fd(byte, 2);
 		return (1);
 	}
 	return (0);
@@ -21,14 +23,14 @@ int	is_byte_finished()
 
 void	handle_incomming_bit(int signal_no, int caller_pid)
 {
-	g_message = g_message << 1;
+	g_message_legacy = g_message_legacy << 1;
 	if (signal_no == SIGUSR2)
-		g_message = g_message | 1;
+		g_message_legacy = g_message_legacy | 1;
 	if (! is_byte_finished())
 		kill(caller_pid, SIGUSR2);
 	else
 	{
-		g_message = 1;
+		g_message_legacy = 1;
 		kill(caller_pid, SIGUSR1);
 		//kill(getpid(), SIGTERM);
 	}

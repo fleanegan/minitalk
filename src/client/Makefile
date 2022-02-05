@@ -30,11 +30,9 @@ UNAME=$(shell uname)
 all: $(NAME)
 
 PRE: 
-	@echo 'pre exec'
 	@make -C $(LIB_PATH)/libft/ --no-print-directory
 
 $(NAME): PRE $(OBJ)
-	@echo "Build $(NAME)"
 	@$(CC) -g $(CFLAGS) $(OBJ) $(LIBFT) -o $(OUT_PATH)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c

@@ -23,11 +23,19 @@ void	signal_catcher(int signal_no, siginfo_t *info, void *hmm)
 
 void	suicide(int signal_no, siginfo_t *info, void *hmm)
 {
-	printf("sent %d signals\n", g_counter_received);
+	g_counter_received++;
 	(void) signal_no;
 	(void) info;
 	(void) hmm;
 	//kill(getpid(), SIGTERM);
+}
+
+int send_str( int server_id, char *in)
+{
+	while (*in)
+		if (send_one_char(server_id, *in++))
+			return (1);
+	return (0);
 }
 
 int main (int argc, char** argv)
@@ -39,11 +47,8 @@ int main (int argc, char** argv)
 	if (set_signal_handler(SIGUSR2, signal_catcher), \
 		set_signal_handler(SIGUSR1, suicide))
 		return (1);
-	send_one_char(server_id, 'B');
-	send_one_char(server_id, 'Y');
-	send_one_char(server_id, 'O');
-	send_one_char(server_id, 'B');
-	printf("the client received %d signals\n", g_counter_received);
+	send_str(server_id, "ayayay, mama");
+	printf("\nthe client received %d signals\n", g_counter_received);
 	kill(server_id, SIGTERM);
 	kill(getpid(), SIGTERM);
     return EXIT_SUCCESS;
