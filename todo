@@ -1,2 +1,3 @@
 - modify lstaddback so that NULL elements dont cause crash
 - do we need to modify lstclear, too?
+- reinit g_message in order to be able to read multiple messages in a row
