@@ -1,10 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By:  <fschlute>                                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/23 09:01:49 by                   #+#    #+#             */
+/*   Updated: 2022/02/07 17:15:05 by fschlute         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <libft.h>
-#include <time.h>
 
 int	set_signal_handler(int signal_no, \
 	void (*handler_function)(int, siginfo_t *, void *));
@@ -28,7 +37,7 @@ void	suicide(int signal_no, siginfo_t *info, void *hmm)
 	exit(1);
 }
 
-int send_str( int server_id, char *in)
+int	send_str( int server_id, char *in)
 {
 	while (*in)
 		if (send_one_char(server_id, *in++))
@@ -36,7 +45,7 @@ int send_str( int server_id, char *in)
 	return (0);
 }
 
-int main (int argc, char** argv)
+int	main(int argc, char **argv)
 {
 	int				server_id;
 
@@ -48,17 +57,20 @@ int main (int argc, char** argv)
 		return (1);
 	if (send_str(server_id, argv[1]) \
 		|| send_one_char(server_id, NULLTERMIN))
-    return EXIT_SUCCESS;
-	(void) argc;
-	(void) argv;
-	(void) server_id;
+	{
+		ft_putendl_fd("transmission failed", 2);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
 
 int	send_one_char(int server_pid, char data)
 {
 	unsigned char	bit_to_transfer;
 	int				counter;
-	char			bit_len = 8;
+	char			bit_len;
+
+	bit_len = 8;
 	while (bit_len--)
 	{
 		counter = g_counter_received;
@@ -74,15 +86,9 @@ int	send_one_char(int server_pid, char data)
 			if (kill(server_pid, SIGUSR1))
 				return (1);
 		}
-		usleep(100);
+		usleep(10000);
 		if (g_counter_received == counter)
-			usleep(10000);
-		if (g_counter_received == counter)
-		{
-			ft_putendl_fd("no answer received", 2);
-			exit(2);
 			return (1);
-		}
 	}
 	return (0);
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c								            :+:      :+:    :+:   */
+/*   helper.c								            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By:  <fschlute>                                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,19 +10,37 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include <signal.h>
-#include <string.h>
 
-int	set_signal_handler(int signal_no, \
-	void (*handler_function)(int, siginfo_t *, void *))
+void	finalize_message(int *byte)
 {
-	struct sigaction	act;
+	*byte = *byte & 0b01111111;
+}
 
-	memset(&act, 0, sizeof act);
-	sigemptyset(&act.sa_mask);
-	sigaddset(&act.sa_mask, SIGUSR1);
-	sigaddset(&act.sa_mask, SIGUSR2);
-	act.sa_sigaction = handler_function;
-	act.sa_flags = SA_SIGINFO;
-	return (sigaction(signal_no, &act, NULL));
+int	is_byte_finished(const int *byte)
+{
+	return (*byte & 256);
+}
+
+void	apply_sent_bit_to_message(int signal_no, t_list *message, int **byte)
+{
+	*byte = ft_lstlast(message)->content;
+	**byte = **byte << 1;
+	if (signal_no == SIGUSR2)
+		**byte = **byte | 1;
+}
+
+void	print_and_free_list(t_list **message)
+{
+	t_list	*lst;
+
+	lst = *message;
+	while (lst)
+	{
+		ft_putchar_fd(*(char *)lst->content, 2);
+		lst = lst->next;
+	}
+	ft_putstr_fd("\n", 2);
+	ft_lstclear(message, free);
 }
