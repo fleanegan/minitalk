@@ -14,7 +14,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <libft.h>
-#define	BYTES_IN_CHAR 4
+#define BYTES_IN_CHAR 4
 
 int	set_signal_handler(int signal_no, \
 	void (*handler_function)(int, siginfo_t *, void *));

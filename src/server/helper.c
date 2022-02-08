@@ -12,23 +12,21 @@
 
 #include "libft_auxilliar.h"
 #include <signal.h>
-#define	BYTES_IN_CHAR 4
 
-// 1000 0000
-//
-
+#define BYTES_IN_CHAR 4
 
 void	finalize_message(unsigned long *byte)
 {
 	*byte = *byte & (((1l << (8 * BYTES_IN_CHAR))) - 1);
 }
 
-unsigned long is_byte_finished(const unsigned long *byte)
+unsigned long	is_byte_finished(const unsigned long *byte)
 {
 	return (*byte & ((1l << (8 * BYTES_IN_CHAR))));
 }
 
-void	apply_sent_bit_to_message(int signal_no, t_list *message, unsigned long **byte)
+void	apply_sent_bit_to_message( \
+		int signal_no, t_list *message, unsigned long **byte)
 {
 	*byte = ft_lstlast(message)->content;
 	**byte = **byte << 1;
