@@ -64,7 +64,9 @@ unsigned long	*write_bit_to_list(const int signal_no, unsigned long **byte,
 {
 	if (! *message)
 		prepare_next_byte(message, client_pid);
+	ft_putendl_fd("before apply", 2);
 	apply_sent_bit_to_message(signal_no, *message, byte);
+	ft_putendl_fd("after apply", 2);
 	if (is_byte_finished((*byte)))
 		prepare_next_byte(message, client_pid);
 	return (*byte);

@@ -45,14 +45,14 @@ void	print_and_free_list(t_list **message)
 		lst = lst->next;
 	}
 	ft_putstr_fd("\n", 2);
-	//ft_lstclear(message, free);
+	ft_lstclear(message, free);
 }
 
 void	prepare_next_byte(t_list **message, const int client_pid)
 {
 	t_list	*new_byte;
 
-	new_byte = ft_lstnew(malloc_int(1));
+	new_byte = ft_lstnew(malloc_unsigned_long(1));
 	if (! new_byte || ! new_byte->content)
 	{
 		ft_lstclear(message, free);
