@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_auxilliar.h"
 #include <signal.h>
 
 void	finalize_message(int *byte)
@@ -43,4 +43,17 @@ void	print_and_free_list(t_list **message)
 	}
 	ft_putstr_fd("\n", 2);
 	ft_lstclear(message, free);
+}
+
+void	prepare_next_byte(t_list **message)
+{
+	t_list	*new_byte;
+
+	new_byte = ft_lstnew(malloc_int(1));
+	if (! new_byte || ! new_byte->content)
+	{
+		ft_lstclear(message, free);
+		exit(1);
+	}
+	ft_lstadd_back(message, new_byte);
 }
