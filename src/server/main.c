@@ -42,7 +42,6 @@ void	handle_incomming_bit(int signal_no, siginfo_t *info, void *hmm)
 		{
 			print_and_free_list(&g_message);
 			kill(info->si_pid, SIGUSR1);
-			return ;
 		}
 		kill(info->si_pid, SIGUSR2);
 	}
