@@ -22,22 +22,22 @@ unsigned long	is_byte_finished(const unsigned long *byte);
 void			print_and_free_list(t_list **message);
 void			apply_sent_bit_to_message( \
 				int signal_no, t_list *message, unsigned long **byte);
-void			finalize_message(unsigned long *byte);
-unsigned long	*write_bit_to_list(const int signal_no, unsigned long **byte, \
-				t_list **message, const int client_pid);
+void			finalize_character(unsigned long *byte);
+unsigned long	*append_bit_to_message(const int signal_no, \
+				unsigned long **byte, t_list **message, const int client_pid);
 void			prepare_next_byte(t_list **message, const int client_pid);
 
 void	handle_incomming_bit(int signal_no, siginfo_t *info, void *hmm)
 {
 	unsigned long	*character;
 
-	character = write_bit_to_list(\
+	character = append_bit_to_message(\
 				signal_no, &character, &g_message, info->si_pid);
 	if (! is_byte_finished(character))
 		kill(info->si_pid, SIGUSR2);
 	else
 	{
-		finalize_message(character);
+		finalize_character(character);
 		if (*character == 0)
 			print_and_free_list(&g_message);
 		kill(info->si_pid, SIGUSR2);
@@ -59,8 +59,8 @@ int	main(void)
 		pause();
 }
 
-unsigned long	*write_bit_to_list(const int signal_no, unsigned long **byte,
-				t_list **message, const int client_pid)
+unsigned long	*append_bit_to_message(const int signal_no, \
+				unsigned long **byte, t_list **message, const int client_pid)
 {
 	if (! *message)
 		prepare_next_byte(message, client_pid);

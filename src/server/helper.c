@@ -15,7 +15,7 @@
 
 #define BYTES_IN_CHAR 4
 
-void	finalize_message(unsigned long *byte)
+void	finalize_character(unsigned long *byte)
 {
 	*byte = *byte & (((1l << (8 * BYTES_IN_CHAR))) - 1);
 }
