@@ -19,16 +19,16 @@ t_list	*g_message;
 
 int		set_signal_handler(int signal_no, \
 		void (*handler_function)(int, siginfo_t *, void *));
-int		is_byte_finished(const int *byte);
+unsigned long is_byte_finished(const unsigned long *byte);
 void	print_and_free_list(t_list **message);
-void	apply_sent_bit_to_message(int signal_no, t_list *message, int **byte);
-void	finalize_message(int *byte);
-int		*write_bit_to_list(int signal_no, int **byte, t_list **message);
+void	apply_sent_bit_to_message(int signal_no, t_list *message, unsigned long **byte);
+void	finalize_message(unsigned long *byte);
+unsigned long * write_bit_to_list(int signal_no, unsigned long **byte, t_list **message);
 void	prepare_next_byte(t_list **message);
 
 void	handle_incomming_bit(int signal_no, siginfo_t *info, void *hmm)
 {
-	int	*byte;
+	unsigned long	*byte;
 
 	byte = write_bit_to_list(signal_no, &byte, &g_message);
 	if (! is_byte_finished(byte))
@@ -69,7 +69,7 @@ int	main(void)
 		pause();
 }
 
-int	*write_bit_to_list(int signal_no, int **byte, t_list **message)
+unsigned long * write_bit_to_list(int signal_no, unsigned long **byte, t_list **message)
 {
 	if (! *message)
 		prepare_next_byte(message);

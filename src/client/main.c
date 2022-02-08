@@ -14,10 +14,11 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <libft.h>
+#define	BYTES_IN_CHAR 4
 
 int	set_signal_handler(int signal_no, \
 	void (*handler_function)(int, siginfo_t *, void *));
-int	send_one_char(int server_pid, char data);
+int	send_one_char(int server_pid, unsigned long data);
 
 int	g_busy;
 
@@ -36,17 +37,17 @@ void	suicide(int signal_no, siginfo_t *info, void *hmm)
 	(void) hmm;
 }
 
-int	send_str( int server_id, char *in)
+int	send_str(int server_id, char *in)
 {
 	while (*in)
-		if (send_one_char(server_id, *in++))
+		if (send_one_char(server_id, (unsigned long)*in++))
 			return (1);
 	return (0);
 }
 
 int	main(int argc, char **argv)
 {
-	int				server_id;
+	int	server_id;
 
 	if (argc != 3)
 		return (1);
@@ -65,18 +66,18 @@ int	main(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
-int	send_one_char(int server_pid, char data)
+int	send_one_char(int server_pid, unsigned long data)
 {
-	unsigned char	bit_to_transfer;
+	unsigned long	bit_to_transfer;
 	char			bit_len;
 	int				signal;
 
-	bit_len = 8;
+	bit_len = 8 * BYTES_IN_CHAR;
 	while (bit_len--)
 	{
 		g_busy = 1;
-		bit_to_transfer = data & 0b10000000;
-		data = data << 0b00000001;
+		bit_to_transfer = data & (1l << (8 * (BYTES_IN_CHAR) - 1));
+		data = data << 1;
 		signal = SIGUSR1;
 		if (bit_to_transfer)
 			signal = SIGUSR2;
