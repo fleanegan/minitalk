@@ -35,6 +35,7 @@ void	suicide(int signal_no, siginfo_t *info, void *hmm)
 	(void) signal_no;
 	(void) info;
 	(void) hmm;
+	exit(1);
 }
 
 int	send_str(int server_id, char *in)
