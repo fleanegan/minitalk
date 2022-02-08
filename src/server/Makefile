@@ -11,7 +11,7 @@ OUT_PATH = ../../$(NAME)
 
 SRC_NAME =	main.c \
 			helper.c \
-			../signals.c \
+			signals.c \
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
