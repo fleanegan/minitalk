@@ -12,13 +12,14 @@
 
 #include <signal.h>
 #include <string.h>
+#include "libft.h"
 
 int	set_signal_handler(int signal_no, \
 	void (*handler_function)(int, siginfo_t *, void *))
 {
 	struct sigaction	act;
 
-	memset(&act, 0, sizeof act);
+	ft_memset(&act, 0, sizeof act);
 	sigemptyset(&act.sa_mask);
 	act.sa_sigaction = handler_function;
 	act.sa_flags = 0;

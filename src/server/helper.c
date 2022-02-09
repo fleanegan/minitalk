@@ -12,26 +12,26 @@
 
 #include "libft_auxilliar.h"
 #include <signal.h>
-
 #define BYTES_IN_CHAR 4
+#define INCOMING_BIT_IS_ONE SIGUSR2
 
-void	finalize_character(unsigned long *byte)
+void	finalize_character(unsigned long *character)
 {
-	*byte = *byte & (((1l << (8 * BYTES_IN_CHAR))) - 1);
+	*character = *character & (((1l << (8 * BYTES_IN_CHAR))) - 1);
 }
 
-unsigned long	is_byte_finished(const unsigned long *byte)
+unsigned long	is_character_finished(const unsigned long *character)
 {
-	return (*byte & ((1l << (8 * BYTES_IN_CHAR))));
+	return (*character & ((1l << (8 * BYTES_IN_CHAR))));
 }
 
 void	apply_sent_bit_to_message( \
-		int signal_no, t_list *message, unsigned long **byte)
+		int signal_no, t_list *message, unsigned long **character)
 {
-	*byte = ft_lstlast(message)->content;
-	**byte = **byte << 1;
-	if (signal_no == SIGUSR2)
-		**byte = **byte | 1;
+	*character = ft_lstlast(message)->content;
+	**character = **character << 1;
+	if (signal_no == INCOMING_BIT_IS_ONE)
+		**character = **character | 1;
 }
 
 void	print_and_free_list(t_list **message)
@@ -48,16 +48,16 @@ void	print_and_free_list(t_list **message)
 	ft_lstclear(message, free);
 }
 
-void	prepare_next_byte(t_list **message, const int client_pid)
+void	prepare_next_character(t_list **message, const int client_pid)
 {
-	t_list	*new_byte;
+	t_list	*new_character;
 
-	new_byte = ft_lstnew(malloc_unsigned_long(1));
-	if (! new_byte || ! new_byte->content)
+	new_character = ft_lstnew(malloc_unsigned_long(1));
+	if (! new_character || ! new_character->content)
 	{
 		ft_lstclear(message, free);
 		kill(client_pid, SIGUSR1);
 		exit(1);
 	}
-	ft_lstadd_back(message, new_byte);
+	ft_lstadd_back(message, new_character);
 }
