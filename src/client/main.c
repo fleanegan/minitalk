@@ -84,7 +84,7 @@ int	send_one_char(int server_pid, unsigned long data)
 		if (kill(server_pid, signal))
 			return (1);
 		if (g_wait_for_answer)
-			pause();
+			sleep(1);
 	}
 	return (0);
 }
