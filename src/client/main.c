@@ -52,12 +52,12 @@ int	main(int argc, char **argv)
 
 	if (argc != 3)
 		return (1);
-	server_id = ft_atoi(argv[2]);
+	server_id = ft_atoi(argv[1]);
 	if (server_id == 0 \
 		|| set_signal_handler(SIGUSR2, signal_catcher) \
 		|| set_signal_handler(SIGUSR1, suicide))
 		return (1);
-	if (send_str(server_id, argv[1]) \
+	if (send_str(server_id, argv[2]) \
 		|| send_one_char(server_id, NULLTERMIN))
 	{
 		ft_putendl_fd("transmission failed", 2);
